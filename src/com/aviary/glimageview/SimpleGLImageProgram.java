@@ -68,6 +68,10 @@ public class SimpleGLImageProgram implements GLImagingProgram{
         mVertexBuffer.position(0);
      }
 	
+	public void setFramebufferSize(int width, int height) {
+		// This simple program doesn't use this information
+	}
+	
 	public void setBitmap(Bitmap bitmap){
 		Log.i(LOG_TAG, "Set Bitmap");
 		

@@ -66,6 +66,8 @@ public class GLImageViewRenderer implements GLSurfaceView.Renderer {
 		mCurrentHeight = height;
 		GLES20.glViewport(0, 0, width, height);
 		setupImageRect();
+		
+		mGlProgram.setFramebufferSize(width, height);
 	}
     
 	@Override
