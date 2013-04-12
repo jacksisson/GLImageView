@@ -50,7 +50,7 @@ public class GLImageViewRenderer implements GLSurfaceView.Renderer {
 		Log.i( LOG_TAG, "onSurfaceCreated" );
         mTransformMatrix = new Matrix();   
         mImageBoundsRect = new RectF();
-        
+                
         mGlProgram.setup();
         mHasSetupProgram = true;
         

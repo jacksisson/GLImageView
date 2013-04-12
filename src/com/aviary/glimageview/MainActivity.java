@@ -34,7 +34,8 @@ public class MainActivity extends Activity {
 		
 		SimpleGLImageProgram program = new SimpleGLImageProgram();
 		
-		mGLImageView = new GLImageView(this, program);
+		mGLImageView = new GLImageView(this, null);
+		mGLImageView.setupRendererWithProgram(program);
 		ViewGroup group = (ViewGroup) findViewById(R.id.group );
 		group.addView(mGLImageView);
 		

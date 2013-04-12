@@ -93,8 +93,9 @@ public class SimpleGLImageProgram implements GLImagingProgram{
 			return;
 		}
 		
-		GLES20.glClearColor(1.f, 0.f, 0.f, 1.f);
-	    GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+//		GLES20.glClearColor(1.f, 0.f, 0.f, 1.f);
+		GLES20.glClearColor(0.f, 0.f, 0.f, 0.f);
+	    GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	    
         GLES20.glUseProgram(mProgram);
 

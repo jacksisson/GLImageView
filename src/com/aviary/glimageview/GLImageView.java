@@ -2,8 +2,10 @@ package com.aviary.glimageview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -31,12 +33,28 @@ public class GLImageView extends GLSurfaceView {
 	PointF mLastValidCenter;
 	
 	public GLImageView(Context context){
-		this(context, new SimpleGLImageProgram());
+		this(context, null);
 	}
 	
 	// Constructor
-	public GLImageView(Context context, GLImagingProgram program) {
-		super(context);
+	public GLImageView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		
+		this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		this.setZOrderMediaOverlay(true);
+		
+		// Gestures
+		mScaleListener = new ScaleListener();
+		mScaleDetector = new ScaleGestureDetector(context, mScaleListener);
+		mGestureListener = new GestureListener();
+		mGestureDetector = new GestureDetector( getContext(), mGestureListener, null, true );
+		mLastValidCenter = new PointF();		
+	}
+	
+	public void setupRendererWithProgram(GLImagingProgram program){
+		if(program == null){
+			program = new SimpleGLImageProgram();
+		}
 		
 		// OpenGL Setup
 		this.setEGLContextClientVersion( 2 );
@@ -45,13 +63,6 @@ public class GLImageView extends GLSurfaceView {
 		mCurrentRenderer = new GLImageViewRenderer(program);
 		this.setRenderer( mCurrentRenderer );
 		this.setRenderMode(RENDERMODE_WHEN_DIRTY);
-
-		// Gestures
-		mScaleListener = new ScaleListener();
-		mScaleDetector = new ScaleGestureDetector(context, mScaleListener);
-		mGestureListener = new GestureListener();
-		mGestureDetector = new GestureDetector( getContext(), mGestureListener, null, true );
-		mLastValidCenter = new PointF();
 		
 		this.requestRender();
 	}
@@ -60,6 +71,10 @@ public class GLImageView extends GLSurfaceView {
 	
     public void setOnImageBitmapLoadedListener( OnImageBitmapLoaded listener ) {
     	mCurrentRenderer.setOnImageBitmapLoadedListener(listener);
+    }
+    
+    public void setOnRenderCompletedListener( OnRenderCompletedListener listener ) {
+    	mCurrentRenderer.setOnRenderCompletedListener(listener);
     }
 	
     public void requestBitmap( OnBitmapReadOutCompleted listener, Bitmap bitmap ) {
@@ -236,22 +251,22 @@ public class GLImageView extends GLSurfaceView {
 					float dy = (float) mEasing.easeOut( currentMs, 0, newY - originalY, durationMs );
 					glImageView.mCurrentRenderer.setAbsoluteTranslation(originalX + dx, originalY + dy);
 					glImageView.requestRender();
-//					if(currentMs < durationMs ){
-//						glImageView.postDelayed(this, 10);
-//					}
-					
 					if(currentMs < durationMs ){
-						final Runnable runnable = this;
-						OnRenderCompletedListener listener = new OnRenderCompletedListener() {
-							@Override
-							public void onRenderCompleted() {
-								glImageView.post(runnable);
-							}
-						};
-						mCurrentRenderer.setOnRenderCompletedListener(listener);
-					}else{
-						mCurrentRenderer.setOnRenderCompletedListener(null);
+						glImageView.postDelayed(this, 10);
 					}
+					
+//					if(currentMs < durationMs ){
+//						final Runnable runnable = this;
+//						OnRenderCompletedListener listener = new OnRenderCompletedListener() {
+//							@Override
+//							public void onRenderCompleted() {
+//								glImageView.post(runnable);
+//							}
+//						};
+//						mCurrentRenderer.setOnRenderCompletedListener(listener);
+//					}else{
+//						mCurrentRenderer.setOnRenderCompletedListener(null);
+//					}
 				}
 			} );
 			
